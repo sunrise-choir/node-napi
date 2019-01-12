@@ -165,25 +165,33 @@ impl<'de> Visitor<'de> for ValueVisitor {
     {
         let object = create_object(self.env);
         let mut descriptors: Vec<napi_property_descriptor> = Vec::new();
-            
-        while let Some((key, val)) 
-            = map.next_entry_seed(NapiEnv { env: self.env }, NapiEnv { env: self.env })? {
-                let descriptor = napi_property_descriptor{
-                    utf8name: null(), // key.as_ptr() as *const c_char,
-                    name: key.value,
-                    method: None,
-                    getter: None,
-                    setter: None,
-                    value: val.value,
-                    attributes: napi_property_attributes_napi_enumerable, 
-                    data: null_mut() 
-                };
-                descriptors.push(descriptor);
-            }
 
-        let status = unsafe { napi_define_properties(self.env, object, descriptors.len(), descriptors.as_ptr() as * const napi_property_descriptor) };
+        while let Some((key, val)) =
+            map.next_entry_seed(NapiEnv { env: self.env }, NapiEnv { env: self.env })?
+        {
+            let descriptor = napi_property_descriptor {
+                utf8name: null(), // key.as_ptr() as *const c_char,
+                name: key.value,
+                method: None,
+                getter: None,
+                setter: None,
+                value: val.value,
+                attributes: napi_property_attributes_napi_enumerable,
+                data: null_mut(),
+            };
+            descriptors.push(descriptor);
+        }
+
+        let status = unsafe {
+            napi_define_properties(
+                self.env,
+                object,
+                descriptors.len(),
+                descriptors.as_ptr() as *const napi_property_descriptor,
+            )
+        };
         debug_assert!(status == napi_status_napi_ok);
-        
+
         Ok(NapiValue {
             env: self.env,
             value: object,

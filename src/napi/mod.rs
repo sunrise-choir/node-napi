@@ -81,6 +81,26 @@ pub fn get_null_value(env: napi_env) -> napi_value {
     null_value
 }
 
+pub fn get_this(env: napi_env, info: napi_callback_info) -> napi_value {
+    let mut num_args = 0;
+    let mut args: Vec<napi_value> = Vec::with_capacity(num_args);
+    let mut this = ptr::null_mut();
+
+    let status = unsafe {
+        napi_get_cb_info(
+            env,
+            info,
+            &mut num_args,
+            args.as_mut_ptr(),
+            &mut this,
+            ptr::null_mut(),
+        )
+    };
+
+    debug_assert!(status == napi_status_napi_ok);
+    this
+
+}
 pub fn get_arg(env: napi_env, info: napi_callback_info, arg_index: usize) -> napi_value {
     let mut num_args = arg_index + 1;
     let mut args: Vec<napi_value> = Vec::with_capacity(num_args);
@@ -159,7 +179,7 @@ pub fn create_string_utf8(env: napi_env, string: &str) -> napi_value {
     result
 }
 
-pub fn get_string(env: napi_env, value: napi_value) -> Result<String,Error> {
+pub fn get_string(env: napi_env, value: napi_value) -> Result<String, Error> {
     let mut string_length_value = ptr::null_mut();
 
     let length_value = create_string_utf8(env, &"length");
@@ -380,4 +400,31 @@ pub fn slice_buffer(env: napi_env, buff: napi_value, beginning: usize, end: usiz
     debug_assert!(status == napi_status_napi_ok);
 
     return_value
+}
+
+pub fn define_class(
+    env: napi_env,
+    name: &str,
+    constructor: napi_callback,
+    data: *mut c_void,
+    properties: &[napi_property_descriptor],
+) -> napi_value {
+    let mut result: napi_value = ptr::null_mut();
+
+    let status = unsafe {
+        napi_define_class(
+            env,
+            name.as_ptr() as *const i8,
+            name.len(),
+            constructor,
+            data,
+            properties.len(),
+            properties.as_ptr(),
+            &mut result,
+        )
+    };
+
+    debug_assert!(status == napi_status_napi_ok);
+
+    result
 }

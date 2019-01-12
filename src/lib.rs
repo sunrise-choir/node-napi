@@ -7,3 +7,4 @@ extern crate serde_derive;
 
 pub mod napi;
 pub mod napi_sys;
+pub mod value;
