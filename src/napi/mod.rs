@@ -414,7 +414,7 @@ pub fn define_class(
     let status = unsafe {
         napi_define_class(
             env,
-            name.as_ptr() as *const i8,
+            name.as_ptr() as *const ::std::os::raw::c_char,
             name.len(),
             constructor,
             data,
