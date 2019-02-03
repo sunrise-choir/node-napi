@@ -3,4 +3,4 @@
 
 > Rust wrappers around unsafe calls to the node n-api.
 
-## [Documentation](http://sunrise-choir.github.io/node-napi/node-napi/)
+## [Documentation](http://sunrise-choir.github.io/node-napi/node_napi/)
