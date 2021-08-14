@@ -2,7 +2,7 @@
 name = "node_napi"
 version = "0.1.1"
 authors = ["Piet Geursen <pietgeursen@gmail.com>"]
-license = "AGPL3"
+license = "LGPL-3.0"
 
 [dependencies]
 failure = "0.1.3"
